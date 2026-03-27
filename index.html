@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>EMBERFALL: Shadow of the Veil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="emberfall.css">
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="load-ring"></div>
+  <div class="load-sigil">◈</div>
+  <h1 class="load-title">EMBERFALL</h1>
+  <p class="load-sub">Shadow of the Veil</p>
+  <div class="load-bar-wrap"><div class="load-bar-fill" id="load-bar"></div></div>
+  <p class="load-status" id="load-status">Weaving reality...</p>
+</div>
+
+<!-- TITLE SCREEN -->
+<div id="screen-title" class="screen hidden">
+  <div class="title-bg">
+    <div class="tbg-sky"></div>
+    <div class="tbg-mountains"></div>
+    <div class="tbg-trees"></div>
+    <div class="tbg-ground"></div>
+    <div class="tbg-fog"></div>
+    <div class="tbg-particles" id="title-particles"></div>
+  </div>
+  <div class="title-ui">
+    <p class="title-eyebrow">A Veilwalker's Journey</p>
+    <h1 class="title-main">EMBERFALL</h1>
+    <div class="title-sub">Shadow of the Veil</div>
+    <div class="title-rule"></div>
+    <p class="title-quote">"Between the living and forgotten—<br>only you can walk the Veil."</p>
+    <div class="title-btns">
+      <button class="tbtn primary" id="btn-new">⚔ Begin Journey</button>
+      <button class="tbtn" id="btn-continue" style="display:none">◈ Continue</button>
+      <div class="title-row">
+        <button class="tbtn sm" id="btn-modes">☰ Modes</button>
+        <button class="tbtn sm" id="btn-log">📜 Log</button>
+      </div>
+    </div>
+  </div>
+  <div class="title-version">V6.0 · 2D WORLD ENGINE</div>
+</div>
+
+<!-- GAME WORLD -->
+<div id="game-world" class="hidden">
+
+  <!-- Pixi.js canvas goes here -->
+  <div id="pixi-stage"></div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div id="hud-stats">
+      <div class="hstat">
+        <span class="hl">HP</span>
+        <div class="htrack"><div class="hfill hp" id="bar-hp" style="width:100%"></div></div>
+        <span class="hv" id="val-hp">100</span>
+      </div>
+      <div class="hstat">
+        <span class="hl">MP</span>
+        <div class="htrack"><div class="hfill mp" id="bar-mp" style="width:100%"></div></div>
+        <span class="hv" id="val-mp">60</span>
+      </div>
+      <div class="hstat">
+        <span class="hl">Veil</span>
+        <div class="htrack"><div class="hfill veil" id="bar-cor" style="width:0%"></div></div>
+        <span class="hv" id="val-cor">0%</span>
+      </div>
+    </div>
+    <div id="hud-right">
+      <div class="hbadge" id="hud-lv">Lv.1</div>
+      <div class="hbadge gold">⬡ <span id="val-gold">50</span>g</div>
+    </div>
+  </div>
+
+  <!-- Zone banner -->
+  <div id="zone-banner">
+    <span id="zone-name">Ash'vel · The Fading Village</span>
+    <span id="zone-ch">Chapter I</span>
+  </div>
+
+  <!-- Side buttons -->
+  <div id="side-btns">
+    <button class="sbtn" id="sbtn-map">🗺</button>
+    <button class="sbtn" id="sbtn-inv">🎒</button>
+    <button class="sbtn" id="sbtn-stat">👤</button>
+    <button class="sbtn" id="sbtn-craft">⚗</button>
+  </div>
+
+  <!-- D-Pad (mobile) -->
+  <div id="dpad">
+    <div id="dpad-inner">
+      <button class="dp" id="dp-ul"></button><button class="dp dpbtn" id="dp-u">▲</button><button class="dp" id="dp-ur"></button>
+      <button class="dp dpbtn" id="dp-l">◀</button><div class="dp-c"></div><button class="dp dpbtn" id="dp-r">▶</button>
+      <button class="dp" id="dp-dl"></button><button class="dp dpbtn" id="dp-d">▼</button><button class="dp" id="dp-dr"></button>
+    </div>
+  </div>
+  <div id="action-ring">
+    <button class="aring-btn skill-btn" id="abtn-skill" title="Veil Strike">✨</button>
+    <button class="aring-btn atk-btn" id="abtn-atk" title="Attack">⚔</button>
+  </div>
+
+  <!-- Interact prompt -->
+  <div id="interact-prompt" class="hidden">▲ Interact</div>
+
+  <!-- Scene flash -->
+  <div id="scene-flash"></div>
+
+  <!-- Corruption vignette -->
+  <div id="vignette"></div>
+
+  <!-- Zone transition wipe -->
+  <div id="zone-wipe">
+    <div class="zw-sigil">◈</div>
+    <div class="zw-name" id="zw-name"></div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast-wrap"></div>
+
+  <!-- ════ DIALOGUE BOX ════ -->
+  <div id="dialogue" class="hidden">
+    <div id="dlg-portrait">👤</div>
+    <div id="dlg-body">
+      <div id="dlg-speaker">NPC</div>
+      <div id="dlg-text"></div>
+    </div>
+    <div id="dlg-tap">▼ Tap to continue</div>
+    <div id="dlg-choices" class="hidden"></div>
+  </div>
+
+  <!-- ════ COMBAT ════ -->
+  <div id="combat" class="hidden">
+    <!-- Animated combat background -->
+    <div id="combat-arena-bg"></div>
+    <div id="combat-arena-mid"></div>
+
+    <div id="combat-header">
+      <div id="combat-turn">Your Turn</div>
+    </div>
+
+    <div id="combat-stage">
+      <div class="fighter player-fighter">
+        <div class="fighter-sprite" id="f-player">
+          <div class="sprite-char" id="sprite-player"></div>
+        </div>
+        <div class="fighter-label">VEILWALKER</div>
+        <div class="fighter-hpbar"><div class="fhp player-hp" id="fhp-player"></div></div>
+        <div class="fighter-hpval" id="fhv-player">100/100 HP</div>
+      </div>
+
+      <div id="combat-vs">VS</div>
+
+      <div class="fighter enemy-fighter">
+        <div class="fighter-sprite" id="f-enemy">
+          <div class="sprite-enemy" id="sprite-enemy">👹</div>
+        </div>
+        <div class="fighter-label" id="fl-enemy">SHADOW ECHO</div>
+        <div class="fighter-hpbar"><div class="fhp enemy-hp" id="fhp-enemy"></div></div>
+        <div class="fighter-hpval" id="fhv-enemy">— HP</div>
+      </div>
+    </div>
+
+    <div id="combat-log-box"><div id="combat-log"></div></div>
+
+    <div id="combat-btns">
+      <button class="cbtn" id="cb-atk"><span class="cb-ico">⚔</span><span class="cb-txt">Strike</span></button>
+      <button class="cbtn cbtn-veil" id="cb-spc"><span class="cb-ico">✨</span><span class="cb-txt">Veil Strike</span></button>
+      <button class="cbtn" id="cb-heal"><span class="cb-ico">🧪</span><span class="cb-txt">Heal</span></button>
+      <button class="cbtn cbtn-flee" id="cb-flee"><span class="cb-ico">💨</span><span class="cb-txt">Flee</span></button>
+    </div>
+  </div>
+
+  <!-- ════ PANELS ════ -->
+
+  <!-- Inventory -->
+  <div id="inv-panel" class="panel hidden">
+    <div class="panel-header">
+      <span>🎒 Inventory</span>
+      <button class="panel-x" data-close="inv-panel">✕</button>
+    </div>
+    <div class="panel-tabs">
+      <button class="ptab active" data-inv="items">Items</button>
+      <button class="ptab" data-inv="lore">Lore</button>
+    </div>
+    <div id="inv-grid"></div>
+  </div>
+
+  <!-- Map -->
+  <div id="map-panel" class="panel hidden">
+    <div class="panel-header"><span>🗺 World Map</span><button class="panel-x" data-close="map-panel">✕</button></div>
+    <div id="map-zones"></div>
+  </div>
+
+  <!-- Choice modal -->
+  <div id="choice-modal" class="hidden">
+    <div class="cm-scrim"></div>
+    <div class="cm-box">
+      <div class="cm-header"><span class="cm-sigil">◈</span><span id="cm-title"></span></div>
+      <div id="cm-body"></div>
+      <div id="cm-opts"></div>
+    </div>
+  </div>
+
+</div><!-- /game-world -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.10/browser/pixi.min.js"></script>
+<script src="emberfall.js"></script>
+</body>
+</html>
